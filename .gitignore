@@ -480,3 +480,4 @@ $RECYCLE.BIN/
 #custom
 appsettings.json
 appsettings.Development.json
+wwwroot/CandidatePictures/*

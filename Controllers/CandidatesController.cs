@@ -13,10 +13,12 @@ namespace OnlineVotingSystem.Controllers
     public class CandidatesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment; 
 
-        public CandidatesController(ApplicationDbContext context)
+        public CandidatesController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Candidates
@@ -57,17 +59,47 @@ namespace OnlineVotingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SIN,FirstName,LastName,PoliticalParty,Position,IsEligible,Image,ElectionId")] Candidate candidate)
+        public async Task<IActionResult> Create([Bind("SIN,FirstName,LastName,PoliticalParty,Position,IsEligible,ImageUrl,ElectionId")] CandidateViewModel candidateView)
         {
+            Candidate candidate = new Candidate();
+
             if (ModelState.IsValid)
             {
+                if (candidateView.ImageUrl != null && candidateView.ImageUrl.Length > 0)
+                {
+                    
+                    // Save the profile picture to a specific location on the server
+                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "CandidatePictures", candidateView.ImageUrl.FileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await candidateView.ImageUrl.CopyToAsync(stream);
+                    }
+
+                    // Set the ProfilePicturePath property of the employee
+                    
+                    
+                    candidate.SIN = candidateView.SIN;
+                    candidate.FirstName = candidateView.FirstName;
+                    candidate.LastName = candidateView.LastName;
+                    candidate.PoliticalParty = candidateView.PoliticalParty;
+                    candidate.Position = candidateView.Position;
+                    candidate.IsEligible = candidateView.IsEligible;
+                    candidate.ElectionId = candidateView.ElectionId;
+                    candidate.ImageUrl = filePath;
+                    
+                    
+                }
+                
+
                 _context.Add(candidate);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ElectionId"] = new SelectList(_context.Set<Election>(), "Id", "Id", candidate.ElectionId);
-            return View(candidate);
+            return View(candidateView);
         }
+
+        
 
         // GET: Candidates/Edit/5
         public async Task<IActionResult> Edit(int? id)
