@@ -38,9 +38,15 @@ namespace OnlineVotingSystem.Controllers
         //Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyFace(Voter voter, string faceDetails)
+        public async Task<IActionResult> VerifyFace(Voter voter, IFormFile image)
         {
-             if (voter == null)
+            //autheticate face api client
+            var client = FaceService.Authenticate(_configuration);
+             
+            //detect face
+            var detectedFace =client.Face.DetectWithStreamWithHttpMessagesAsync(image.OpenReadStream(), true ,false);
+
+            if (voter == null)
             {
                 return NotFound();
             }

@@ -1,11 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace OnlineVotingSystem.Models
 {
-    public class Candidate
+    public class CandidateViewModel
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int SIN { get; set; }
         [Required]
         public string FirstName { get; set; }
@@ -16,10 +19,10 @@ namespace OnlineVotingSystem.Models
         [Required]
         public string Position { get; set; }
         public bool IsEligible { get; set; }
-        public string ImageUrl { get; set; }
-        public int ElectionId { get; set; }
+        public IFormFile ImageUrl { get; set; }
         [ForeignKey("ElectionId")]
-        public Election Election { get; set; }
-
+        public int ElectionId { get; set; }
+        
+        
     }
 }
