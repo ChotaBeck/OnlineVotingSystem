@@ -1,0 +1,38 @@
+@model OnlineVotingSystem.Models.Voter
+@using System
+@using System.IO
+@using OpenCvSharp
+@using OnlineVotingSystem.Data
+    
+
+@{
+    ViewData["Title"] = "Vote";
+}
+
+<div class="text-center">
+    
+    <h1>Facial Recognition Camera</h1>
+    <h2>Welcome @Model.FirstName please verify your identity with your face</h2>
+    <video autoplay="true" id="videoElement"></video>
+
+    <script>
+        // Get the video element
+        const video = document.getElementById('videoElement');
+
+        // Check if the browser supports getUserMedia
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Access the user's camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    // Set the video source to the camera stream
+                    video.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.error('Error accessing camera:', error);
+                });
+        } else {
+            console.error('getUserMedia is not supported in this browser.');
+        }
+    </script>
+        
+</div>
