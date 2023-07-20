@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using OnlineVotingSystem.Enum;
 
 namespace OnlineVotingSystem.Models
 {
@@ -17,7 +18,7 @@ namespace OnlineVotingSystem.Models
         [Required]
         public string PoliticalParty { get; set; }
         [Required]
-        public string Position { get; set; }
+        public PositionEnum Position { get; set; }
         public bool IsEligible { get; set; }
         public IFormFile ImageUrl { get; set; }
         [ForeignKey("ElectionId")]

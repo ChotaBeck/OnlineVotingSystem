@@ -82,7 +82,7 @@ namespace OnlineVotingSystem.Controllers
                     candidate.FirstName = candidateView.FirstName;
                     candidate.LastName = candidateView.LastName;
                     candidate.PoliticalParty = candidateView.PoliticalParty;
-                    candidate.Position = candidateView.Position;
+                    candidate.Position = candidateView.Position.ToString();
                     candidate.IsEligible = candidateView.IsEligible;
                     candidate.ElectionId = candidateView.ElectionId;
                     candidate.ImageUrl = filePath;

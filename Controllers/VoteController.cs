@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OnlineVotingSystem.Data;
 using OnlineVotingSystem.Models;
 using System.Diagnostics;
@@ -20,12 +21,14 @@ namespace OnlineVotingSystem.Controllers
             _faceService = faceService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+             return _context.Election != null ? 
+                          View(await _context.Election.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Voter'  is null.");
+            
         }
 
-    
         //Get
         public IActionResult VerifyFace(Voter voter)
         {
@@ -74,6 +77,26 @@ namespace OnlineVotingSystem.Controllers
                 return NotFound();
             }
             return RedirectToAction("VerifyFace",voter);
+        }
+
+        //GET
+        public async Task<IActionResult> VoteCandidate(int? id)
+        {
+            if (id == null || _context.Election == null)
+            {
+                return NotFound();
+            }
+            //var applicationDbContext = _context.Candidate.Include(c => c.Election);
+            var candidates = await _context.Candidate.Where(c => c.ElectionId == id).ToListAsync();
+                    
+           
+            if (candidates == null)
+            {
+                return NotFound();
+            }
+            
+            return View(candidates);
+            
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
