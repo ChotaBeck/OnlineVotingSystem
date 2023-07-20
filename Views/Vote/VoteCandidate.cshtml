@@ -1,58 +1,47 @@
 @model IEnumerable<OnlineVotingSystem.Models.Candidate>
+@using OnlineVotingSystem.Enum
+
 @{
     ViewData["Title"] = "Vote For Candidates";
+    
 }
+<h3 class="text-center">Check the the circles to vote for you candidates </h3>
+@foreach (var position in Enum.GetNames<PositionEnum>())
+{
+    
+    <div class="card">
+    <div class="card-header">
+        @position
+    </div>
+    <div class="card-body">
+        
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var item in Model)
+                {
+                    if (item.Position == position)
+                    {
+                        <div class="col">
+                            <div class="card" >
+                            <img src="@item.ImageUrl" class="card-img-top" alt="@item.FirstName photo">
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.FirstName @item.LastName</h5>
+                                    <p class="card-text">Political Party: @item.PoliticalParty</p>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="@position " id="flexRadioDefault1">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                            Vote Here
+                                    </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
 
-<h1>Index</h1>
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PoliticalParty)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsEligible)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Election)
-            </th>
-            
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PoliticalParty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsEligible)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Election.Id)
-            </td>
-            
-        </tr>
+        
+    </div>
+    
+    </div>
+    <br>
 }
-    </tbody>
-</table>
