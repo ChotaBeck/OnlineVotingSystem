@@ -6,6 +6,7 @@
     
 }
 <h3 class="text-center">Check the the circles to vote for you candidates </h3>
+<form asp-action="voteCandidate" method="post">
 @foreach (var position in Enum.GetNames<PositionEnum>())
 {
     
@@ -27,16 +28,18 @@
                                     <h5 class="card-title">@item.FirstName @item.LastName</h5>
                                     <p class="card-text">Political Party: @item.PoliticalParty</p>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="@position " id="flexRadioDefault1">
+                                        <input class="form-check-input" type="radio" name="@position " id="flexRadioDefault1" value="@item.SIN">
                                         <label class="form-check-label" for="flexRadioDefault1">
                                             Vote Here
-                                    </label>
+                                        </label>
+                                        @* <input type="hidden" name="candidates" value="@item.SIN"> *@
                                     </div>
                                 </div>
                             </div>
                         </div>
                     }
                 }
+               
             </div>
 
         
@@ -45,3 +48,7 @@
     </div>
     <br>
 }
+ <button type="submit" class="btn btn-primary">Vote</button>
+ </form>
+
+

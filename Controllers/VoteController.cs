@@ -99,6 +99,42 @@ namespace OnlineVotingSystem.Controllers
             
         }
 
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VoteCandidate(Dictionary<string, int> candidates)
+        {
+            if (candidates == null)
+            {
+                return NotFound();
+            }
+            
+            List<Candidate> votedCandidates = new List<Candidate>();
+            Candidate voteCandidate;
+            foreach (var candidatesSIN in candidates)
+            {   
+                voteCandidate = _context.Candidate.Where(c => c.SIN == candidatesSIN.Value).FirstOrDefault();
+                votedCandidates.Add(voteCandidate);
+            }
+            if (votedCandidates != null)
+            {
+                Vote vote = new Vote(1234,votedCandidates);
+                
+                    _context.Add(vote);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(VoteSuccess));
+                
+            }
+            // ViewBag["error"] = "Voted Failed";
+            return View(votedCandidates);
+            
+        }
+
+        private IActionResult VoteSuccess()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
