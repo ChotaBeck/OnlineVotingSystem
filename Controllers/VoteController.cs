@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.CognitiveServices.Vision.Face;
 using Microsoft.EntityFrameworkCore;
 using OnlineVotingSystem.Data;
 using OnlineVotingSystem.Models;
@@ -43,19 +44,47 @@ namespace OnlineVotingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyFace(Voter voter, IFormFile image)
         {
-            //autheticate face api client
-            var client = FaceService.Authenticate(_configuration);
-             
-            //detect face
-            var detectedFace =client.Face.DetectWithStreamWithHttpMessagesAsync(image.OpenReadStream(), true ,false);
-
-            if (voter == null)
+            if (voter == null || image == null || image.Length == 0)
             {
                 return NotFound();
             }
-            return View(voter);
+
+            // Authenticate with the Face API using your subscription key and endpoint
+            var faceClient = new FaceClient(new ApiKeyServiceClientCredentials("c94b1dbdc745430c904a1f880bb6affd"))
+            {
+                Endpoint = "https://evotingsystem.cognitiveservices.azure.com/"
+            };
+
+            // Detect face in the uploaded image
+            var faces = await faceClient.Face.DetectWithStreamAsync(image.OpenReadStream(), returnFaceId: true);
+
+            if (faces.Count == 0)
+            {
+                // No face detected
+                ViewBag.ErrorMessage = "No face detected in the provided image.";
+                return View(voter);
+            }
+
+            // Assuming you have a face ID associated with the voter
+            var voterFaceId = Guid.Parse(voter.FaceId); // Replace with your logic
+            
+            // Verify the detected face with the voter's face
+            var verifyResult = await faceClient.Face.VerifyFaceToFaceAsync(faces[0].FaceId.Value, voterFaceId);
+
+            if (verifyResult.IsIdentical)
+            {
+                // Face verification successful
+                // Proceed with further actions or redirect
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                // Face verification failed
+                ViewBag.ErrorMessage = "Face verification failed. The provided face does not match the voter's face.";
+                return View(voter);
+            }
         }
-        //GET
+            //GET
         public IActionResult Verification()
         {
             return View();
@@ -130,7 +159,7 @@ namespace OnlineVotingSystem.Controllers
             
         }
 
-        private IActionResult VoteSuccess()
+        public IActionResult VoteSuccess()
         {
             return View();
         }
