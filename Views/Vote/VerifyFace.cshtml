@@ -1,19 +1,93 @@
 @model OnlineVotingSystem.Models.Voter
 @using System
 @using System.IO
-@using OpenCvSharp
 @using OnlineVotingSystem.Data
     
 
 @{
-    ViewData["Title"] = "Vote";
+    ViewData["Title"] = "Verify Face";
 }
 
 <div class="text-center">
     
-    <h1>Facial Recognition Camera</h1>
+    <h2>@ViewData["Title"]</h2>
     <h2>Welcome @Model.FirstName please verify your identity with your face</h2>
-    <video autoplay="true" id="videoElement"></video>
+
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+
+<div id="camera-container">
+    <video id="camera" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+</div>
+
+<div id="result" style="display:none;">
+    <p id="verification-status"></p>
+    <button id="retry-button" class="btn btn-primary">Retry</button>
+</div>
+
+<script>
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('canvas');
+    const resultContainer = document.getElementById('result');
+    const verificationStatus = document.getElementById('verification-status');
+    const retryButton = document.getElementById('retry-button');
+
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+        }
+    }
+
+    async function captureImage() {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL('image/jpeg');
+
+        // Send captured image to server for verification using AJAX
+        const response = await fetch('@Url.Action("VerifyFace", "Vote")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ imageData })
+        });
+
+        const data = await response.json();
+        displayResult(data.isIdentical);
+    }
+
+    function displayResult(isIdentical) {
+        verificationStatus.textContent = isIdentical
+            ? 'Face verified successfully!'
+            : 'Face verification failed. Please try again.';
+        resultContainer.style.display = 'block';
+    }
+
+    startCamera();
+
+    retryButton.addEventListener('click', () => {
+        resultContainer.style.display = 'none';
+    });
+</script>
+
+
+
+
+    @* <div class="container">
+        <video autoplay="true" id="videoElement"></video>
+    </div>
+
 
     <script>
         // Get the video element
@@ -34,5 +108,5 @@
             console.error('getUserMedia is not supported in this browser.');
         }
     </script>
-        
+         *@
 </div>

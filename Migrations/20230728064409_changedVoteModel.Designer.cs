@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineVotingSystem.Data;
 
@@ -11,9 +12,10 @@ using OnlineVotingSystem.Data;
 namespace OnlineVotingSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230728064409_changedVoteModel")]
+    partial class changedVoteModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,14 +257,9 @@ namespace OnlineVotingSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("VoteId")
-                        .HasColumnType("int");
-
                     b.HasKey("SIN");
 
                     b.HasIndex("ElectionId");
-
-                    b.HasIndex("VoteId");
 
                     b.ToTable("Candidate");
                 });
@@ -287,32 +284,12 @@ namespace OnlineVotingSystem.Migrations
                     b.ToTable("Election");
                 });
 
-            modelBuilder.Entity("OnlineVotingSystem.Models.Vote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("VoterId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Votes");
-                });
-
             modelBuilder.Entity("OnlineVotingSystem.Models.Voter", b =>
                 {
                     b.Property<int>("SIN")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FaceId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -397,21 +374,12 @@ namespace OnlineVotingSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnlineVotingSystem.Models.Vote", null)
-                        .WithMany("VotedCandidate")
-                        .HasForeignKey("VoteId");
-
                     b.Navigation("Election");
                 });
 
             modelBuilder.Entity("OnlineVotingSystem.Models.Election", b =>
                 {
                     b.Navigation("Candidates");
-                });
-
-            modelBuilder.Entity("OnlineVotingSystem.Models.Vote", b =>
-                {
-                    b.Navigation("VotedCandidate");
                 });
 #pragma warning restore 612, 618
         }

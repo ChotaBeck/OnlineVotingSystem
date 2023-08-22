@@ -1,0 +1,30 @@
+@model IEnumerable<OnlineVotingSystem.Models.Election>
+@{
+    ViewData["Title"] = "Vote";
+}
+
+<div class="text-center">
+    <h2>Pick the appropriate election to vote</h2>
+    <div class="display-4 container">
+        @foreach (var item in Model)
+        {
+            <div class="border border-success">
+                <div class="card text-center">
+                    <div class="card-header">
+                        Election: @item.Name @item.Year
+                    </div>
+                    <div class="card-body">
+                        @* <h5 class="card-title"></h5>  *@
+                        <a asp-action="VoteCandidate" asp-route-id="@item.Id" class="btn btn-success btn-lg">Vote</a>                    
+                    </div>
+                    <div class="card-footer text-body-secondary">
+                        Election: @item.Name @item.Year
+                    </div>
+                </div>
+            </div>
+            <br>
+        }
+        
+
+    </div>
+</div>

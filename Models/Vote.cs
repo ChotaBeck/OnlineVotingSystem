@@ -4,7 +4,17 @@
     {
         public int Id { get; set; }
         public int VoterId { get; set; }
-        public int CandidateId { get; set; }
-        public DateTime TimeOfVote { get; set; }
+        public List<Candidate> VotedCandidate { get; set; }
+
+        public Vote(){  }
+
+        public Vote(int voterId, List<Candidate> votedCandidate)
+        {
+        voterId = voterId;
+        votedCandidate = votedCandidate;
+        }
     }
+    
+
+    
 }
