@@ -2,6 +2,7 @@
 @using System
 @using System.IO
 @using OnlineVotingSystem.Data
+@using OpenCvSharp;
     
 
 @{
@@ -22,64 +23,48 @@
 }
 
 
-<div id="camera-container">
-    <video id="camera" autoplay playsinline></video>
-    <canvas id="canvas" style="display:none;"></canvas>
-</div>
 
-<div id="result" style="display:none;">
-    <p id="verification-status"></p>
-    <button id="retry-button" class="btn btn-primary">Retry</button>
-</div>
+    <video id="video" autoplay></video>
+    <button id="capture">Capture Image</button>
+    <canvas id="canvas" style="display: none;"></canvas>
 
-<script>
-    const video = document.getElementById('camera');
-    const canvas = document.getElementById('canvas');
-    const resultContainer = document.getElementById('result');
-    const verificationStatus = document.getElementById('verification-status');
-    const retryButton = document.getElementById('retry-button');
+    <script>
+        var video = document.getElementById('video');
+        var canvas = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
 
-    async function startCamera() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-        } catch (error) {
-            console.error('Error accessing camera:', error);
-        }
-    }
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function (error) {
+                console.error('Error accessing webcam:', error);
+            });
 
-    async function captureImage() {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = canvas.toDataURL('image/jpeg');
+        $('#capture').on('click', function () {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
 
-        // Send captured image to server for verification using AJAX
-        const response = await fetch('@Url.Action("VerifyFace", "Vote")', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ imageData })
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imageData = canvas.toDataURL('image/jpeg');
+
+            // Send the imageData to the server for processing using an AJAX request
+            $.ajax({
+                url: '@Url.Action("CaptureImage", "Vote")',  // Replace with your actual URL
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ imageData: imageData }),
+                success: function (result) {
+                    if (result.success) {
+                        console.log('Image captured and sent successfully.');
+                    } else {
+                        console.error('Error capturing and sending image.');
+                    }
+                }
+            });
         });
-
-        const data = await response.json();
-        displayResult(data.isIdentical);
-    }
-
-    function displayResult(isIdentical) {
-        verificationStatus.textContent = isIdentical
-            ? 'Face verified successfully!'
-            : 'Face verification failed. Please try again.';
-        resultContainer.style.display = 'block';
-    }
-
-    startCamera();
-
-    retryButton.addEventListener('click', () => {
-        resultContainer.style.display = 'none';
-    });
-</script>
+    </script>
 
 
 

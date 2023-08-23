@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using OnlineVotingSystem.Models;
 
 namespace OnlineVotingSystem.Controllers
 {
+   
     public class ElectionsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace OnlineVotingSystem.Controllers
         }
 
         // GET: Elections
+         [Authorize]
         public async Task<IActionResult> Index()
         {
               return _context.Election != null ? 
@@ -56,7 +59,7 @@ namespace OnlineVotingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Year")] Election election)
+        public async Task<IActionResult> Create([Bind("Id,Name,Year,DeadLine")] Election election)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +91,7 @@ namespace OnlineVotingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Year")] Election election)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Year,DeadLine")] Election election)
         {
             if (id != election.Id)
             {

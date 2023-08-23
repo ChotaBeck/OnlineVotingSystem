@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using OnlineVotingSystem.Models;
 
 namespace OnlineVotingSystem.Controllers
 {
+    
     public class VotersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace OnlineVotingSystem.Controllers
         }
 
         // GET: Voters
+        [Authorize] 
         public async Task<IActionResult> Index()
         {
               return _context.Voter != null ? 

@@ -1,0 +1,43 @@
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Vote For Candidates";
+}
+
+@model IEnumerable<OnlineVotingSystem.Models.Candidate>
+@using OnlineVotingSystem.Enum
+
+
+
+<h3 class="text-center">Results</h3>
+
+@foreach (var position in Enum.GetNames<PositionEnum>())
+{
+    <div class="card">
+        <div class="card-header">
+            @position
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var item in Model.Where(candidate => candidate.Position == position))
+                {
+                    <div class="col">
+                        <div class="card">
+
+                            <div class="card-body">
+                                <h5 class="card-title">@item.FirstName @item.LastName</h5>
+                                <p class="card-text">Political Party: @item.PoliticalParty</p>
+                                <p class="card-text">Total Votes: @item.TotalVotes</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <br>
+}
+
+ 
+
+
+

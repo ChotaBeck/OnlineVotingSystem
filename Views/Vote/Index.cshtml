@@ -15,8 +15,60 @@
                     </div>
                     <div class="card-body">
                         @* <h5 class="card-title"></h5>  *@
-                        <a asp-action="VoteCandidate" asp-route-id="@item.Id" class="btn btn-success btn-lg">Vote</a>                    
+                        <a id="votebutton" asp-action="VoteCandidate" asp-route-id="@item.Id" class="btn btn-success btn-lg">Vote</a>                    
                     </div>
+                    <div id="countdown"></div>
+                   
+                    @{
+                                DateTime dateTimeValue = item.DeadLine; // Replace this with your actual DateTime value
+                                string iso8601DateTime = dateTimeValue.ToString("yyyy-MM-ddTHH:mm:ss");
+
+                            }
+                    <script>
+                        
+                        // Set the target datetime for the countdown
+                        // Format the datetime as "YYYY-MM-DDTHH:mm:ss" for JavaScript compatibility
+                        var targetDate = new Date('@iso8601DateTime');
+
+                        var voteButton = document.getElementById("votebutton");
+
+                        function updateCountdown() {
+                            
+                            var now = new Date();
+                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+
+                            var duration = new Date(0);
+
+                            // Set the hours to 2
+                            duration.setHours(2);
+                            var timeRemaining = targetDate - now ;
+                            console.log("Now:", (now- duration));
+                            console.log("targatedate:", targetDate);
+                            console.log("iso8601DateTime:", '@iso8601DateTime');
+                            console.log("Time remaining:", timeRemaining);
+                            if (timeRemaining == 0) {
+                                document.getElementById("countdown").innerHTML = "Countdown expired";
+                                voteButton.disabled = true;
+                            } else {
+                                var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                                var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                                var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                                var countdownText = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+                                document.getElementById("countdown").innerHTML = countdownText;
+
+                                voteButton.disabled = false;
+                            }
+                        }
+
+                        updateCountdown();
+                        setInterval(updateCountdown, 1000);
+                    </script>
+
+                    
+
+
                     <div class="card-footer text-body-secondary">
                         Election: @item.Name @item.Year
                     </div>

@@ -9,6 +9,7 @@ namespace OnlineVotingSystem.Models
         [Required]
         public string Name { get; set; }
         public int Year { get; set; }
+        public DateTime DeadLine { get; set; }
         public List<Candidate>? Candidates { get; set; }
 
     }

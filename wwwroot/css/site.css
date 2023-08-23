@@ -16,3 +16,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+h1,h2,h3,h4,a,th,td,dt,dd,label{
+  color: white;
+}
+body {
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}

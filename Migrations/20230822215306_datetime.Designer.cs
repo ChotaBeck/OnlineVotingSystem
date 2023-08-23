@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineVotingSystem.Data;
 
@@ -11,9 +12,10 @@ using OnlineVotingSystem.Data;
 namespace OnlineVotingSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230822215306_datetime")]
+    partial class datetime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,12 +257,14 @@ namespace OnlineVotingSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TotalVotes")
+                    b.Property<int?>("VoteId")
                         .HasColumnType("int");
 
                     b.HasKey("SIN");
 
                     b.HasIndex("ElectionId");
+
+                    b.HasIndex("VoteId");
 
                     b.ToTable("Candidate");
                 });
@@ -295,12 +299,6 @@ namespace OnlineVotingSystem.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CandidateId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ElectionId")
-                        .HasColumnType("int");
 
                     b.Property<int>("VoterId")
                         .HasColumnType("int");
@@ -400,12 +398,21 @@ namespace OnlineVotingSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OnlineVotingSystem.Models.Vote", null)
+                        .WithMany("VotedCandidate")
+                        .HasForeignKey("VoteId");
+
                     b.Navigation("Election");
                 });
 
             modelBuilder.Entity("OnlineVotingSystem.Models.Election", b =>
                 {
                     b.Navigation("Candidates");
+                });
+
+            modelBuilder.Entity("OnlineVotingSystem.Models.Vote", b =>
+                {
+                    b.Navigation("VotedCandidate");
                 });
 #pragma warning restore 612, 618
         }

@@ -21,6 +21,7 @@ namespace OnlineVotingSystem.Models
         public int ElectionId { get; set; }
         [ForeignKey("ElectionId")]
         public Election Election { get; set; }
+        public int TotalVotes { get; set; }
 
     }
 }
