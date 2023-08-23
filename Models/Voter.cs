@@ -17,6 +17,6 @@ namespace OnlineVotingSystem.Models
         [Required]
         public bool IsEligible { get; set; } = false;
         public bool HasVoted { get; set; } = false;
-        public string FaceId { get; set; }
+       // public string FaceId { get; set; }
     }
 }

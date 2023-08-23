@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +7,7 @@ using OnlineVotingSystem.Models;
 
 namespace OnlineVotingSystem.Controllers
 {
+    
     public class CandidatesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +20,7 @@ namespace OnlineVotingSystem.Controllers
         }
 
         // GET: Candidates
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Candidate.Include(c => c.Election);
@@ -69,7 +68,12 @@ namespace OnlineVotingSystem.Controllers
                 {
                     
                     // Save the profile picture to a specific location on the server
-                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "CandidatePictures", candidateView.ImageUrl.FileName);
+                     // Save the profile picture to a specific location on the server
+                    var relativePath = Path.Combine("CandidatePictures", candidateView.ImageUrl.FileName);
+                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+                    
+                    
+                    // var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "CandidatePictures", candidateView.ImageUrl.FileName);
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await candidateView.ImageUrl.CopyToAsync(stream);
@@ -85,7 +89,7 @@ namespace OnlineVotingSystem.Controllers
                     candidate.Position = candidateView.Position.ToString();
                     candidate.IsEligible = candidateView.IsEligible;
                     candidate.ElectionId = candidateView.ElectionId;
-                    candidate.ImageUrl = filePath;
+                    candidate.ImageUrl =  "/" + relativePath;
                     
                     
                 }

@@ -23,13 +23,16 @@
                     {
                         <div class="col">
                             <div class="card" >
+                            
                             <img src="@item.ImageUrl" class="card-img-top" alt="@item.FirstName photo">
+                           
+
                                 <div class="card-body">
                                     <h5 class="card-title">@item.FirstName @item.LastName</h5>
                                     <p class="card-text">Political Party: @item.PoliticalParty</p>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="@position " id="flexRadioDefault1" value="@item.SIN">
-                                        <label class="form-check-label" for="flexRadioDefault1">
+                                        <label style="color: black;" class="form-check-label" for="flexRadioDefault1">
                                             Vote Here
                                         </label>
                                         @* <input type="hidden" name="candidates" value="@item.SIN"> *@
@@ -50,5 +53,7 @@
 }
  <button type="submit" class="btn btn-primary">Vote</button>
  </form>
+
+
 
 

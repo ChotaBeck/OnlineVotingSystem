@@ -4,14 +4,17 @@
     {
         public int Id { get; set; }
         public int VoterId { get; set; }
-        public List<Candidate> VotedCandidate { get; set; }
+        public int CandidateId { get; set; }
+        public int ElectionId { get; set; }
+        
 
         public Vote(){  }
 
-        public Vote(int voterId, List<Candidate> votedCandidate)
+        public Vote(int voterId, int candidateId, int electionId)
         {
-        voterId = voterId;
-        votedCandidate = votedCandidate;
+        VoterId = voterId;
+        CandidateId = candidateId;
+        ElectionId = electionId;
         }
     }
     
